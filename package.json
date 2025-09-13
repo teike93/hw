@@ -1,13 +1,12 @@
 {
-  "name": "helpdesk-app",
+  "name": "helpdesk-backend",
   "version": "1.0.0",
-  "description": "Helpdesk Ticketing System",
+  "main": "backend/dist/server.js",
   "scripts": {
     "build": "cd backend && npm install && npx prisma generate && npm run build",
-    "start": "cd backend && npm start",
-    "dev": "cd backend && npm run dev"
+    "start": "cd backend && npm start"
   },
-  "keywords": ["helpdesk", "ticketing", "fastify", "react"],
-  "author": "Helpdesk Project",
-  "license": "MIT"
+  "engines": {
+    "node": "18.x"
+  }
 }

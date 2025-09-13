@@ -1,7 +1,0 @@
-# Frontend deployment configuration
-[build]
-builder = "NIXPACKS"
-
-[deploy]
-buildCommand = "npm install && npm run build"
-startCommand = "npm run preview"
