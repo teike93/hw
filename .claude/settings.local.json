@@ -15,7 +15,9 @@
       "Bash(curl:*)",
       "Bash(docker logs:*)",
       "Bash(npm test)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)"
     ],
     "deny": [],
     "ask": []

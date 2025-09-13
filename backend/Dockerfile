@@ -14,7 +14,9 @@ RUN npm ci --only=production
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY package.json package-lock.json* ./
+# Install ALL dependencies (including dev dependencies) for building
+RUN npm ci
 COPY . .
 
 # Generate Prisma client
