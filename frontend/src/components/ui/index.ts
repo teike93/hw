@@ -8,3 +8,5 @@ export * from './Spinner';
 export * from './Skeleton';
 export * from './Toast';
 export * from './Label';
+export * from './Pagination';
+export * from './EmptyState';
