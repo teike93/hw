@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Ticket } from 'lucide-react';
-import { useTickets } from '../../hooks';
+import { useTickets, useUrlFilters } from '../../hooks';
 import { TicketCard } from './TicketCard';
+import { TicketFilters } from './TicketFilters';
 import { 
   Button, 
   SkeletonCard, 
@@ -10,42 +10,18 @@ import {
   Pagination,
   Select 
 } from '../ui';
-import type { TicketFilters } from '../../types';
 
-interface TicketListProps {
-  filters?: TicketFilters;
-  onFiltersChange?: (filters: TicketFilters) => void;
-}
-
-export function TicketList({ filters = {}, onFiltersChange }: TicketListProps) {
+export function TicketList() {
   const navigate = useNavigate();
-  const [currentFilters, setCurrentFilters] = useState<TicketFilters>({
-    page: 1,
-    limit: 12,
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
-    ...filters,
-  });
-
-  const { data, isLoading, error, refetch } = useTickets(currentFilters);
-
-  const handleFilterChange = (newFilters: Partial<TicketFilters>) => {
-    const updatedFilters = { 
-      ...currentFilters, 
-      ...newFilters,
-      // Reset to page 1 when filters change (except for page changes)
-      page: newFilters.page !== undefined ? newFilters.page : 1
-    };
-    setCurrentFilters(updatedFilters);
-    onFiltersChange?.(updatedFilters);
-  };
+  const { filters, updateFilters } = useUrlFilters();
+  const { data, isLoading, error, refetch } = useTickets(filters);
 
   const handlePageChange = (page: number) => {
-    handleFilterChange({ page });
+    updateFilters({ ...filters, page });
   };
 
   const handleLimitChange = (limit: string) => {
-    handleFilterChange({ limit: parseInt(limit, 10) });
+    updateFilters({ ...filters, limit: parseInt(limit, 10), page: 1 });
   };
 
   if (error) {
@@ -64,6 +40,14 @@ export function TicketList({ filters = {}, onFiltersChange }: TicketListProps) {
     );
   }
 
+  const hasFiltersApplied = !!(
+    filters.search || 
+    filters.status || 
+    filters.priority ||
+    filters.sortBy !== 'createdAt' ||
+    filters.sortOrder !== 'desc'
+  );
+
   return (
     <div className="space-y-6">
       {/* Header with create button and controls */}
@@ -79,7 +63,7 @@ export function TicketList({ filters = {}, onFiltersChange }: TicketListProps) {
           <div className="flex items-center gap-2 text-sm">
             <span className="text-muted-foreground">Show:</span>
             <Select
-              value={currentFilters.limit?.toString() || '12'}
+              value={filters.limit?.toString() || '12'}
               onChange={(e) => handleLimitChange(e.target.value)}
               className="w-20"
             >
@@ -100,6 +84,12 @@ export function TicketList({ filters = {}, onFiltersChange }: TicketListProps) {
         </div>
       </div>
 
+      {/* Filters */}
+      <TicketFilters 
+        filters={filters}
+        onFiltersChange={updateFilters}
+      />
+
       {/* Loading state */}
       {isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -113,15 +103,17 @@ export function TicketList({ filters = {}, onFiltersChange }: TicketListProps) {
       {!isLoading && data && data.tickets.length === 0 && (
         <EmptyState
           icon={<Ticket className="h-16 w-16" />}
-          title="No tickets found"
+          title={hasFiltersApplied ? "No tickets found" : "No tickets yet"}
           description={
-            Object.keys(filters).length > 0
+            hasFiltersApplied
               ? "No tickets match your current filters. Try adjusting your search criteria."
               : "No support tickets have been created yet. Create your first ticket to get started."
           }
           action={{
-            label: "Create First Ticket",
-            onClick: () => navigate('/tickets/new'),
+            label: hasFiltersApplied ? "Clear Filters" : "Create First Ticket",
+            onClick: hasFiltersApplied 
+              ? () => updateFilters({ page: 1, limit: filters.limit, sortBy: 'createdAt', sortOrder: 'desc' })
+              : () => navigate('/tickets/new'),
           }}
         />
       )}
