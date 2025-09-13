@@ -85,7 +85,7 @@ export function EditTicketForm({ ticketId, onCancel, onSuccess }: EditTicketForm
 
       const updatedTicket = await updateTicketMutation.mutateAsync({
         id: actualTicketId,
-        data: ticketData,
+        updates: ticketData,
       });
 
       addToast({

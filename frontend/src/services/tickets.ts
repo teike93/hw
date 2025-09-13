@@ -7,9 +7,9 @@ import type {
   TicketFilters 
 } from '../types';
 
-export class TicketsAPI {
-  private static readonly BASE_PATH = '/tickets';
+const BASE_PATH = '/tickets';
 
+export class TicketsAPI {
   // Get all tickets with optional filtering
   static async getTickets(filters?: TicketFilters): Promise<TicketListResponse> {
     const params = new URLSearchParams();
@@ -22,33 +22,32 @@ export class TicketsAPI {
       });
     }
 
-    const response = await apiClient.get<TicketListResponse>(
-      `${this.BASE_PATH}?${params.toString()}`
-    );
+    const url = `${BASE_PATH}?${params.toString()}`;
+    const response = await apiClient.get<TicketListResponse>(url);
     return response.data;
   }
 
   // Get a specific ticket by ID
   static async getTicket(id: string): Promise<Ticket> {
-    const response = await apiClient.get<Ticket>(`${this.BASE_PATH}/${id}`);
+    const response = await apiClient.get<Ticket>(`${BASE_PATH}/${id}`);
     return response.data;
   }
 
   // Create a new ticket
   static async createTicket(ticket: CreateTicketRequest): Promise<Ticket> {
-    const response = await apiClient.post<Ticket>(this.BASE_PATH, ticket);
+    const response = await apiClient.post<Ticket>(BASE_PATH, ticket);
     return response.data;
   }
 
   // Update an existing ticket
   static async updateTicket(id: string, updates: UpdateTicketRequest): Promise<Ticket> {
-    const response = await apiClient.put<Ticket>(`${this.BASE_PATH}/${id}`, updates);
+    const response = await apiClient.put<Ticket>(`${BASE_PATH}/${id}`, updates);
     return response.data;
   }
 
   // Delete a ticket
   static async deleteTicket(id: string): Promise<void> {
-    await apiClient.delete(`${this.BASE_PATH}/${id}`);
+    await apiClient.delete(`${BASE_PATH}/${id}`);
   }
 }
 
