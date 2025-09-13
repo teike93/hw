@@ -1,0 +1,13 @@
+{
+  "name": "helpdesk-app",
+  "version": "1.0.0",
+  "description": "Helpdesk Ticketing System",
+  "scripts": {
+    "build": "cd backend && npm install && npx prisma generate && npm run build",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev"
+  },
+  "keywords": ["helpdesk", "ticketing", "fastify", "react"],
+  "author": "Helpdesk Project",
+  "license": "MIT"
+}
