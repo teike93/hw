@@ -1,8 +1,10 @@
-# Development Dockerfile for Backend
-FROM node:18-alpine
+# Development Dockerfile for Backend - Fixed for Prisma compatibility
+FROM node:18-slim
 
-# Install dependencies
-RUN apk add --no-cache libc6-compat
+# Install OpenSSL and other required dependencies for Prisma
+RUN apt-get update -y && \
+    apt-get install -y openssl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -14,6 +16,9 @@ RUN npm install
 
 # Copy source code
 COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
 
 # Expose port
 EXPOSE 3000
